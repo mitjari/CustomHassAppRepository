@@ -1,6 +1,6 @@
 # https://developers.home-assistant.io/docs/apps/configuration#app-configuration
 name: upmpdcli
-version: "1.0.1"
+version: "1.0.3"
 slug: upmpdcli
 description: Subsonic-to-UPnP/DLNA bridge (wraps giof71/upmpdcli) for HEOS, Sonos and other UPnP renderers.
 url: "https://github.com/mitjari/CustomHassAppRepository/tree/main/upmpdcli"

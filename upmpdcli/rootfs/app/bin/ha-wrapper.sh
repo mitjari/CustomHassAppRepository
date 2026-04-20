@@ -23,45 +23,42 @@ if [ -f "${OPTIONS_FILE}" ]; then
     cat > "${CONFIG_FILE}" <<EOF
 # Rendered by the Home Assistant upmpdcli app wrapper — do not edit by hand.
 # Appended to the image-generated /etc/upmpdcli/upmpdcli.conf (last wins).
+# Only non-default overrides are set here; plugin defaults are left alone.
 
+# ─── Identity & services ───
 msfriendlyname = ${friendly_name}
 
-# Disable the UPnP media renderer; this app is only a Subsonic bridge.
+# Act only as a UPnP Media Server (Subsonic bridge), not a Media Renderer.
 upnpav = 0
 openhome = 0
 
-# Land UPnP browsers directly inside the Subsonic plugin (HEOS-friendly).
+# Land UPnP browsers directly inside the Subsonic plugin — HEOS "Artists at
+# root" fix.
 msrootalias = 0\$subsonic\$
 
-# Subsonic plugin
+# Required by the plugin's image cache (enables upmpdcli's built-in webserver).
+webserverdocumentroot = 1
+
+# HEOS handles HTTP 302 fine; switch to "proxy" if a specific renderer chokes.
+plgproxymethod = redirect
+
+# ─── Subsonic plugin connection ───
 subsonicuser = ${subsonic_user}
 subsonicpassword = ${subsonic_password}
-subsonicautostart = 1
 subsonicbaseurl = ${subsonic_url}
 subsonicport = ${subsonic_port}
 subsonictitle = ${subsonic_title}
 
-# HEOS-friendly browsing tweaks
-subsonicitemsperpage = 50
-subsonicappendyeartoalbumcontainer = 1
-subsonicappendyeartoalbumview = 0
-subsonicappendyeartoalbumsearchres = 0
-subsonicprependnumberinalbumlist = 0
-subsonicshowemptyfavorites = 0
-subsonicshowemptyplaylists = 0
-subsonicallowgenreinalbumcontainer = 0
-subsonicallowappendgenreinalbumview = 0
-subsonicartistalbumnewestfirst = 1
+# ─── Browsing tweaks (non-default overrides) ───
+subsonicitemsperpage = 50             # plugin default 20
+subsonicdisablenavigablealbum = 1     # drop album → Focus → tracks layer
+subsonicmaxartistsperpage = 500       # defeat A-Z paging within artist lists
+subsonicallowartistcoverart = 0       # avoid slow Navidrome+Spotify artist art
 
-# Cover-art caching
-webserverdocumentroot = 1
+# ─── Cover-art cache ───
 subsonicenableimagecaching = 1
 subsonicenablecachedimageagelimit = 1
 subsoniccachedimagemaxagedays = 30
-subsonicallowartistcoverart = 0
-
-# Streaming: HEOS handles HTTP 302 fine; switch to "proxy" if a renderer trips.
-plgproxymethod = redirect
 EOF
 
     if [ -n "${extra_config}" ]; then
