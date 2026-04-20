@@ -1,4 +1,8 @@
 <!-- https://developers.home-assistant.io/docs/apps/presentation#keeping-a-changelog -->
+## 1.0.7
+
+- Clean up baked config: drop three options that match upstream defaults — `webserverdocumentroot = 1` (upmpdcli default is 1, the built-in webserver is already on), `plgproxymethod = redirect` (upmpdcli default), and `subsonicappendrolestoartist = 0` (plugin default `False`). No behavior change.
+
 ## 1.0.6
 
 - Replace the default "Artists" root tile (hardwired to the ArtistRoles → A-Z initial → Artist chain, not defeated by `maxartistsperpage`) with the flat `ALL_ARTISTS_UNSORTED` tile via `subsonictaginitialpageenabledARTISTS = 0` / `…ALL_ARTISTS_UNSORTED = 1`. Clicking the resulting "All Artists" tile goes straight to a paginated artist list; combined with `subsonicmaxartistsperpage = 500` the list fits on one page for typical libraries. The upstream plugin has no knob for the `ARTIST_FOCUS` intermediate between an artist and their albums — that layer remains.

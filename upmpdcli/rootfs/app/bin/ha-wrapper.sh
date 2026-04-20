@@ -36,12 +36,6 @@ openhome = 0
 # root" fix.
 msrootalias = 0\$subsonic\$
 
-# Required by the plugin's image cache (enables upmpdcli's built-in webserver).
-webserverdocumentroot = 1
-
-# HEOS handles HTTP 302 fine; switch to "proxy" if a specific renderer chokes.
-plgproxymethod = redirect
-
 # ─── Subsonic plugin connection ───
 subsonicuser = ${subsonic_user}
 subsonicpassword = ${subsonic_password}
@@ -50,28 +44,12 @@ subsonicport = ${subsonic_port}
 subsonictitle = ${subsonic_title}
 
 # ─── Browsing tweaks (non-default overrides) ───
-# Plugin default is 20; HEOS scrolls smoother at 50.
 subsonicitemsperpage = 50
-# Drop the album → Focus → tracks layer (click album, get tracks).
-subsonicdisablenavigablealbum = 1
-# Defeat A-Z paging within artist lists (default 20 triggers letter index).
-subsonicmaxartistsperpage = 500
-# Skip artist portraits — Navidrome+Spotify throttling stalls cold browses.
-subsonicallowartistcoverart = 0
-# preload_songs writes ~3000+ rows on startup and races with the browse
-# path's identifier encoding over SQLite write locks, causing "database is
-# locked" errors during early browsing. Artist/album preload still runs.
+# subsonicallowartistcoverart = 0
 subsonicpreloadsongs = 0
 
-subsonicappendrolestoartist = 0
-
-# ─── Root-page tiles ───
-# The default "Artists" tile is hardwired to ArtistRoles → A-Z → Artist and
-# offers no flat-list path. Add the (off-by-default) "All Artists" tile which
-# goes straight to a flat, paginated artist list — subsonicmaxartistsperpage
-# above keeps that list on one page for typical library sizes.
+# The default "Artists" tile is hardwired to ArtistRoles. Show All artists instead.
 subsonictaginitialpageenabledALL_ARTISTS_UNSORTED = 1
-# Hide the nested-hierarchy "Artists" tile so the root has a single entry.
 subsonictaginitialpageenabledARTISTS = 0
 
 # ─── Cover-art cache ───
