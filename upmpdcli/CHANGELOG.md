@@ -1,4 +1,8 @@
 <!-- https://developers.home-assistant.io/docs/apps/presentation#keeping-a-changelog -->
+## 1.0.4
+
+- Fix: move inline comments off the same line as config values. upmpdcli's parser reads everything after `=` verbatim (no trailing-`#` stripping), so `subsonicitemsperpage = 50    # plugin default 20` was parsed as the value `"50             # plugin default 20"` and crashed the subsonic plugin with `ValueError: invalid literal for int()`.
+
 ## 1.0.3
 
 - Clean up baked config: drop options that matched plugin defaults (`appendyeartoalbumcontainer`, `appendyeartoalbumview`, `prependnumberinalbumlist`, `showemptyfavorites`, `showemptyplaylists`, `allowgenreinalbumcontainer`, `artistalbumnewestfirst`, `subsonicautostart`). Remove two silently-ignored legacy names: `subsonicappendyeartoalbumsearchres` (actual: `…searchresult`) and `subsonicallowappendgenreinalbumview` (actual: `allowgenreinalbumview`) — both also matched defaults. Result: config file is shorter and every remaining line is a real override.

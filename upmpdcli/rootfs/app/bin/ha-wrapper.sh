@@ -50,10 +50,14 @@ subsonicport = ${subsonic_port}
 subsonictitle = ${subsonic_title}
 
 # ─── Browsing tweaks (non-default overrides) ───
-subsonicitemsperpage = 50             # plugin default 20
-subsonicdisablenavigablealbum = 1     # drop album → Focus → tracks layer
-subsonicmaxartistsperpage = 500       # defeat A-Z paging within artist lists
-subsonicallowartistcoverart = 0       # avoid slow Navidrome+Spotify artist art
+# Plugin default is 20; HEOS scrolls smoother at 50.
+subsonicitemsperpage = 50
+# Drop the album → Focus → tracks layer (click album, get tracks).
+subsonicdisablenavigablealbum = 1
+# Defeat A-Z paging within artist lists (default 20 triggers letter index).
+subsonicmaxartistsperpage = 500
+# Skip artist portraits — Navidrome+Spotify throttling stalls cold browses.
+subsonicallowartistcoverart = 0
 
 # ─── Cover-art cache ───
 subsonicenableimagecaching = 1
