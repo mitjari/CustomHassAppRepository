@@ -8,6 +8,13 @@ Apps documentation: <https://developers.home-assistant.io/docs/apps>
 
 This repository contains the following apps
 
+### [upmpdcli](./upmpdcli)
+
+![Supports aarch64 Architecture][aarch64-shield]
+![Supports amd64 Architecture][amd64-shield]
+
+_Subsonic-to-UPnP/DLNA bridge for HEOS, Sonos and other UPnP renderers._
+
 ### [Example app](./example)
 
 ![Supports aarch64 Architecture][aarch64-shield]

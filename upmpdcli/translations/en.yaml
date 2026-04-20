@@ -1,0 +1,22 @@
+configuration:
+  friendly_name:
+    name: Friendly name
+    description: Name advertised on the UPnP/DLNA network (visible in HEOS, Sonos, etc.).
+  subsonic_url:
+    name: Subsonic URL
+    description: Base URL of the Subsonic-compatible server (e.g. http://navidrome.local).
+  subsonic_port:
+    name: Subsonic port
+    description: TCP port of the Subsonic server.
+  subsonic_user:
+    name: Subsonic user
+    description: Username for the Subsonic server.
+  subsonic_password:
+    name: Subsonic password
+    description: Password for the Subsonic user.
+  subsonic_title:
+    name: Subsonic library title
+    description: Label shown at the root of the Subsonic library browser.
+  extra_config:
+    name: Extra config
+    description: Additional upmpdcli.conf directives, appended verbatim. One "key = value" per line.

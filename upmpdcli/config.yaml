@@ -1,0 +1,28 @@
+# https://developers.home-assistant.io/docs/apps/configuration#app-configuration
+name: upmpdcli
+version: "1.0.0"
+slug: upmpdcli
+description: Subsonic-to-UPnP/DLNA bridge (wraps giof71/upmpdcli) for HEOS, Sonos and other UPnP renderers.
+url: "https://github.com/mitjari/CustomHassAppRepository/tree/main/upmpdcli"
+arch:
+  - aarch64
+  - amd64
+init: false
+host_network: true
+options:
+  friendly_name: HomeMusicLibrary
+  subsonic_url: "http://192.168.1.10"
+  subsonic_port: 4533
+  subsonic_user: guest
+  subsonic_password: guest
+  subsonic_title: Music
+  extra_config: ""
+schema:
+  friendly_name: str
+  subsonic_url: url
+  subsonic_port: "int(1,65535)"
+  subsonic_user: str
+  subsonic_password: password
+  subsonic_title: str?
+  extra_config: str?
+image: "ghcr.io/mitjari/upmpdcli"
