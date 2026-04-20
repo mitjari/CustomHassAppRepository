@@ -58,6 +58,10 @@ subsonicdisablenavigablealbum = 1
 subsonicmaxartistsperpage = 500
 # Skip artist portraits — Navidrome+Spotify throttling stalls cold browses.
 subsonicallowartistcoverart = 0
+# preload_songs writes ~3000+ rows on startup and races with the browse
+# path's identifier encoding over SQLite write locks, causing "database is
+# locked" errors during early browsing. Artist/album preload still runs.
+subsonicpreloadsongs = 0
 
 # ─── Cover-art cache ───
 subsonicenableimagecaching = 1
