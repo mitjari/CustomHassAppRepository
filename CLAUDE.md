@@ -4,45 +4,51 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-A Home Assistant **apps** repository (custom store) — not integrations and not classic add-ons. See https://developers.home-assistant.io/docs/apps. `repository.yaml` is the store manifest; each top-level directory (e.g. `example/`) is a single app that gets built into a multi-arch OCI image and consumed by the Supervisor.
+A Home Assistant **apps** repository (custom store) — not integrations and not classic add-ons. See https://developers.home-assistant.io/docs/apps. `repository.yaml` is the store manifest; each top-level directory (e.g. `example/`, `upmpdcli/`) is a single app.
+
+**Distribution model: build-on-device, not publish-to-registry.** No `image:` key in any app's `config.yaml`. Supervisor clones this repo on each HA device and builds the Dockerfile locally. There are no image-publishing CI workflows — only linting runs in CI. The `upmpdcli/` app relies on this: it `FROM`s `giof71/upmpdcli` and layers a wrapper on top.
 
 ## App anatomy
 
-Each app directory is self-contained and has this shape:
+Each app directory is self-contained:
 
-- `config.yaml` — app manifest (`name`, `version`, `slug`, `arch`, `options`, `schema`, `image`). `slug` **must** equal the directory name. Bumping `version` triggers a rebuild on push to `main`; update `CHANGELOG.md` alongside.
-- `Dockerfile` — built `FROM ghcr.io/home-assistant/base:<ver>`; `COPY rootfs /` lays the s6-overlay service tree on top of the base image.
-- `rootfs/etc/services.d/<slug>/run` — s6-overlay service entrypoint, written in `bashio`. Reads user config via `bashio::config '<key>'` (keys match `options`/`schema` in `config.yaml`) and `exec`s the actual program.
-- `rootfs/usr/bin/<binary>` — the actual program the service runs.
-- `translations/<lang>.yaml` — UI strings for the options schema.
-- `apparmor.txt`, `icon.png`, `logo.png`, `DOCS.md`, `README.md`, `CHANGELOG.md` — standard sidecar files.
+- `config.yaml` — app manifest (`name`, `version`, `slug`, `arch`, `options`, `schema`). `slug` **must** equal the directory name. Supervisor detects updates by comparing the git-repo `version:` against installed; bump it (and add a `CHANGELOG.md` entry) on every change you want devices to pick up.
+- `Dockerfile` — either `FROM ghcr.io/home-assistant/base:<ver>` with an s6-overlay service tree (`example/`), or `FROM` an upstream image with a thin wrapper entrypoint (`upmpdcli/`). Both patterns are valid.
+- `rootfs/` — everything under this dir is `COPY`'d to `/` in the image. For s6-style apps: services live at `rootfs/etc/services.d/<slug>/run`. For wrapper-style apps: the wrapper script lives wherever the image expects (e.g. `rootfs/app/bin/ha-wrapper.sh` for upmpdcli).
+- `translations/<lang>.yaml` — option labels shown in the HA options UI.
+- `apparmor.txt` (optional), `icon.png`, `logo.png`, `DOCS.md`, `README.md`, `CHANGELOG.md`.
+
+The wrapper pattern (upmpdcli): entrypoint reads HA options from `/data/options.json` with `jq`, renders them into the format the upstream binary expects, then `exec`s upstream's original entrypoint. Use this when wrapping a maintained upstream image beats reimplementing it on `home-assistant/base`.
 
 ## Local development
 
-The canonical dev loop is the Home Assistant devcontainer (`.devcontainer.json` → `ghcr.io/home-assistant/devcontainer:5-apps`) driving the Supervisor. Tasks in `.vscode/tasks.json`:
+Dev loop is the HA devcontainer (`.devcontainer.json` → `ghcr.io/home-assistant/devcontainer:5-apps`) driving the Supervisor. VS Code tasks (`.vscode/tasks.json`):
 
-- **Start Home Assistant** — `supervisor_run` (boots the Supervisor inside the devcontainer).
-- **Install App** — `ha apps install "local_<appName>"` (note the `local_` prefix — local-mode slug).
-- **Start App** — `ha apps stop/start` + `ha apps logs -f`.
-- **Rebuild and Start App** — `ha apps rebuild --force` then start + tail logs. Use this after Dockerfile/rootfs changes.
+- **Start Home Assistant** — `supervisor_run` (boots Supervisor inside the devcontainer).
+- **Install App** — `ha apps install "local_<slug>"` (note the `local_` prefix for local-mode apps).
+- **Start App** — stop/start + tail logs.
+- **Rebuild and Start App** — `ha apps rebuild --force` then start + tail logs. Use after any Dockerfile/rootfs change.
 
-The `appName` picker in `tasks.json` is a hardcoded list — **when adding a new app directory, also add its slug to the `options` array** in `.vscode/tasks.json` or it won't appear in the picker.
+The `appName` picker in `tasks.json` is a hardcoded list — **when adding a new app, add its slug to the `options` array** or it won't appear in the picker.
 
-**While iterating locally, comment out the `image:` key in the app's `config.yaml`** so the Supervisor builds locally instead of pulling from the registry. Restore it before pushing.
+## CI
 
-## CI / builds
+Only `.github/workflows/lint.yaml` runs: `frenck/action-addon-linter` on every discovered app directory (auto-discovered via `home-assistant/actions/helpers/find-addons`). No build/publish workflows exist by design — see distribution model above.
 
-Two workflows in `.github/workflows/`:
+## Update flow on a device
 
-- `builder.yaml` (push/PR to `main`): diffs changed files against `MONITORED_FILES` (`config.json config.yaml config.yml Dockerfile rootfs`) per app directory, then fans out to `build-app.yaml` only for apps that actually changed. If `builder.yaml` or `build-app.yaml` themselves change, **all** apps rebuild. `publish: true` only on `push`, not PRs.
-- `build-app.yaml` — multi-arch build via `home-assistant/builder`, pushes to the registry defined by `image:` in `config.yaml` with tags `<version>` and `latest`. Gated by `if: github.repository == 'mitjari/CustomHassAppRepository'` — keep this guard in sync if the repo is ever renamed, otherwise the build job is silently skipped.
-- `lint.yaml` — runs `frenck/action-addon-linter` on every discovered app directory (matrix is auto-discovered via `home-assistant/actions/helpers/find-addons`).
+1. Bump `version:` in the app's `config.yaml`, add a changelog entry, push to `main`.
+2. On the device, Supervisor periodically re-clones the repo (trigger immediately via UI **Reload** or `ha store reload`).
+3. Supervisor compares the refreshed `version:` to what's installed; newer → "Update available" in UI.
+4. User clicks update (or `ha apps update local_<slug>`) → Supervisor rebuilds the image from the Dockerfile and restarts the container.
+
+Without a version bump, pushed changes are invisible to the device.
 
 ## Adding a new app
 
 1. Copy `example/` to a new directory named after the app's slug.
-2. Edit `config.yaml`: set `name`, `slug` (= dir name), `version` starting at `1.0.0`, `image` pointing at your ghcr namespace, and the `options`/`schema` pair.
-3. Rename the s6 service directory: `rootfs/etc/services.d/example/` → `rootfs/etc/services.d/<slug>/`.
-4. Replace `rootfs/usr/bin/my_program` with the real program; update `run` to `exec` it.
-5. Add the slug to the `appName` picker in `.vscode/tasks.json`.
-6. Create/refresh `CHANGELOG.md`, `icon.png`, `logo.png`, `translations/en.yaml`.
+2. Edit `config.yaml`: set `name`, `slug` (= dir name), `version` `1.0.0`, the `options`/`schema` pair. Do **not** add an `image:` key.
+3. Rewrite the Dockerfile and `rootfs/` for your app (s6-style or wrapper-style).
+4. Add the slug to the `appName` picker in `.vscode/tasks.json`.
+5. Refresh `CHANGELOG.md`, `icon.png`, `logo.png`, `translations/en.yaml`, `DOCS.md`, `README.md`.
+6. List the app in the root `README.md`.

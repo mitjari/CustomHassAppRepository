@@ -14,4 +14,3 @@ options:
   message: "Hello world..."
 schema:
   message: "str?"
-image: "ghcr.io/mitjari/app-example"
