@@ -11,13 +11,6 @@ UPSTREAM_ENTRYPOINT="/app/bin/run-upmpdcli.sh"
 
 mkdir -p "${CONFIG_DIR}"
 
-# Persist upstream's /cache across container restarts by pointing it at /data.
-mkdir -p /data/cache
-if [ ! -L /cache ]; then
-    rm -rf /cache
-    ln -s /data/cache /cache
-fi
-
 if [ -f "${OPTIONS_FILE}" ]; then
     friendly_name=$(jq -r '.friendly_name // "HomeMusicLibrary"' "${OPTIONS_FILE}")
     subsonic_url=$(jq -r '.subsonic_url // empty' "${OPTIONS_FILE}")

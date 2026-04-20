@@ -24,7 +24,7 @@ The app runs with `host_network: true` because UPnP/DLNA discovery requires mult
 
 ## Persistence
 
-Upstream's `/cache` (cover-art cache, plugin credentials) is redirected to the app's `/data/cache` so it survives container rebuilds.
+Upstream's `/cache` (cover-art cache, plugin credentials) lives in a Docker-managed anonymous volume. It survives container restarts but may be rebuilt if Supervisor recreates the container (e.g. on app update). This is only a performance cache — nothing important is lost.
 
 ## Troubleshooting
 
