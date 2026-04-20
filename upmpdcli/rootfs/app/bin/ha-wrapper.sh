@@ -63,6 +63,17 @@ subsonicallowartistcoverart = 0
 # locked" errors during early browsing. Artist/album preload still runs.
 subsonicpreloadsongs = 0
 
+subsonicappendrolestoartist = 0
+
+# ─── Root-page tiles ───
+# The default "Artists" tile is hardwired to ArtistRoles → A-Z → Artist and
+# offers no flat-list path. Add the (off-by-default) "All Artists" tile which
+# goes straight to a flat, paginated artist list — subsonicmaxartistsperpage
+# above keeps that list on one page for typical library sizes.
+subsonictaginitialpageenabledALL_ARTISTS_UNSORTED = 1
+# Hide the nested-hierarchy "Artists" tile so the root has a single entry.
+subsonictaginitialpageenabledARTISTS = 0
+
 # ─── Cover-art cache ───
 subsonicenableimagecaching = 1
 subsonicenablecachedimageagelimit = 1
