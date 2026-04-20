@@ -25,4 +25,7 @@ schema:
   subsonic_password: password
   subsonic_title: str?
   extra_config: str?
-image: "ghcr.io/mitjari/upmpdcli"
+# Commented out while iterating locally so Supervisor builds from the
+# Dockerfile instead of pulling from ghcr.io. Uncomment before pushing
+# to main (CI publishes to this registry path).
+# image: "ghcr.io/mitjari/upmpdcli"
