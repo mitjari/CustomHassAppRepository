@@ -1,4 +1,8 @@
 <!-- https://developers.home-assistant.io/docs/apps/presentation#keeping-a-changelog -->
+## 1.1.0
+
+- First stable release after the 1.0.x tuning cycle. No functional change over 1.0.7 — config file reformatted for brevity (inline section comments removed; every baked key is a verified non-default override).
+
 ## 1.0.7
 
 - Clean up baked config: drop three options that match upstream defaults — `webserverdocumentroot = 1` (upmpdcli default is 1, the built-in webserver is already on), `plgproxymethod = redirect` (upmpdcli default), and `subsonicappendrolestoartist = 0` (plugin default `False`). No behavior change.

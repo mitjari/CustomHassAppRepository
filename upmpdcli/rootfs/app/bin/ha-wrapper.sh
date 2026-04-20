@@ -43,14 +43,14 @@ subsonicbaseurl = ${subsonic_url}
 subsonicport = ${subsonic_port}
 subsonictitle = ${subsonic_title}
 
-# ─── Browsing tweaks (non-default overrides) ───
+# ─── Browsing tweaks ───
 subsonicitemsperpage = 50
-# subsonicallowartistcoverart = 0
+subsonicallowartistcoverart = 0
 subsonicpreloadsongs = 0
-
-# The default "Artists" tile is hardwired to ArtistRoles. Show All artists instead.
 subsonictaginitialpageenabledALL_ARTISTS_UNSORTED = 1
 subsonictaginitialpageenabledARTISTS = 0
+subsonicmaxartistsperpage = 500
+subsonicdisablenavigablealbum = 1
 
 # ─── Cover-art cache ───
 subsonicenableimagecaching = 1
