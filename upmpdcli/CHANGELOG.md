@@ -1,4 +1,8 @@
 <!-- https://developers.home-assistant.io/docs/apps/presentation#keeping-a-changelog -->
+## 1.1.1
+
+- Revert the 1.0.6 tile swap. The flat `ALL_ARTISTS_UNSORTED` tile queries Subsonic via `search3?query=""`, which Navidrome (and likely other servers) answers with an incomplete artist set — some artists were missing mid-list. The default `ARTISTS` tile uses the `getArtists` API path, which is authoritative. Accepting the ArtistRoles → A-Z → Artist nesting in exchange for data completeness. `subsonicallowartistcoverart = 0` stays — HEOS doesn't render artist art anyway.
+
 ## 1.1.0
 
 - First stable release after the 1.0.x tuning cycle. No functional change over 1.0.7 — config file reformatted for brevity (inline section comments removed; every baked key is a verified non-default override).

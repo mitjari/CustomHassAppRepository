@@ -47,8 +47,6 @@ subsonictitle = ${subsonic_title}
 subsonicitemsperpage = 50
 subsonicallowartistcoverart = 0
 subsonicpreloadsongs = 0
-subsonictaginitialpageenabledALL_ARTISTS_UNSORTED = 1
-subsonictaginitialpageenabledARTISTS = 0
 subsonicmaxartistsperpage = 500
 subsonicdisablenavigablealbum = 1
 
